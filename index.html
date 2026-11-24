@@ -35,10 +35,24 @@
     }
     input:focus, select:focus { border-color: #2563eb; }
     .info-box { font-size: 0.75em; color: #64748b; margin-top: 4px; font-style: italic; }
-    .result { margin-top: 15px; padding: 15px; background: #f1f5f9; border-radius: 10px; border-left: 4px solid #2563eb; }
-    .result p { margin: 6px 0; font-size: 0.9em; color: #334155; display: flex; justify-content: space-between; }
-    .result span { font-weight: bold; color: #0f172a; }
-    .copyright { text-align: center; margin-top: 20px; font-size: 0.75em; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+    
+    /* === PERBAIKAN CSS HASIL === */
+    .result { 
+      margin-top: 15px; padding: 15px; background: #f1f5f9; 
+      border-radius: 10px; border-left: 4px solid #2563eb; 
+    }
+    .result p { 
+      margin: 6px 0; font-size: 0.9em; color: #334155; 
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .result p > .val {
+      font-weight: bold; color: #0f172a; text-align: right;
+    }
+    
+    .copyright { 
+      text-align: center; margin-top: 20px; font-size: 0.75em; 
+      color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; 
+    }
     .hidden { display: none; }
   </style>
 </head>
@@ -99,37 +113,38 @@
   <input type="number" id="waste" value="5" min="0" oninput="hitung()">
   <div class="info-box" id="waste-info">*Persentase waste otomatis disesuaikan dengan bentuk area.</div>
 
+  <!-- === PERBAIKAN STRUKTUR HTML HASIL === -->
   <div class="result">
-    <p>Estimasi Luas Area: <span id="luas">0</span> m²</p>
+    <p><span>Estimasi Luas Area:</span> <span class="val"><span id="luas">0</span> m²</span></p>
     
     <div id="res-decking">
-        <p>Decking Plank: <span id="decking">0</span> batang</p>
-        <p>Joist(MAD 01F) (290cm): <span id="joist">0</span> batang</p>
-        <p>Clip Starting(MAD 02F): <span id="clipStart">0</span> pcs</p>
-        <p>Clip Connecting(MAD 04F): <span id="clipConn">0</span> pcs</p>
-        <p>Fisher & Screw(MAD 06F): <span id="fisherScrew">0</span> pcs</p>
+        <p><span>Decking Plank:</span> <span class="val"><span id="decking">0</span> batang</span></p>
+        <p><span>Joist(MAD 01F) (290cm):</span> <span class="val"><span id="joist">0</span> batang</span></p>
+        <p><span>Clip Starting(MAD 02F):</span> <span class="val"><span id="clipStart">0</span> pcs</span></p>
+        <p><span>Clip Connecting(MAD 04F):</span> <span class="val"><span id="clipConn">0</span> pcs</span></p>
+        <p><span>Fisher & Screw(MAD 06F):</span> <span class="val"><span id="fisherScrew">0</span> pcs</span></p>
     </div>
     
     <div id="res-vinyl" class="hidden">
-        <p>Kebutuhan Vinyl: <span id="vinyl">0</span> box</p>
-        <p>Lem Kuning (0.25kg/m²): <span id="lem">0</span> kg</p>
+        <p><span>Kebutuhan Vinyl:</span> <span class="val"><span id="vinyl">0</span> box</span></p>
+        <p><span>Lem Kuning (0.25kg/m²):</span> <span class="val"><span id="lem">0</span> kg</span></p>
     </div>
 
     <div id="res-spc" class="hidden">
-        <p>Kebutuhan <span id="spc-label">SPC</span>: <span id="spc">0</span> box</p>
+        <p><span>Kebutuhan <span id="spc-label">SPC</span>:</span> <span class="val"><span id="spc">0</span> box</span></p>
     </div>
 
     <div id="res-wallpanel" class="hidden">
-        <p>Kebutuhan Panel: <span id="wp-batang">0</span> batang</p>
-        <p>Clip: <span id="wp-clip">0</span> pcs</p>
-        <p>Sealant (280ml): <span id="wp-sealant">0</span> tube</p>
-        <p>Double Tape: <span id="wp-tape">0</span> roll</p>
+        <p><span>Kebutuhan Panel:</span> <span class="val"><span id="wp-batang">0</span> batang</span></p>
+        <p><span>Clip:</span> <span class="val"><span id="wp-clip">0</span> pcs</span></p>
+        <p><span>Sealant (280ml):</span> <span class="val"><span id="wp-sealant">0</span> tube</span></p>
+        <p><span>Double Tape:</span> <span class="val"><span id="wp-tape">0</span> roll</span></p>
     </div>
 
     <div id="res-plint" class="hidden">
-        <p>Keliling Ruangan: <span id="keliling">0</span> m</p>
-        <p>Kebutuhan Plint: <span id="plint-batang">0</span> batang</p>
-        <p>Sealant (1:3): <span id="plint-sealant">0</span> tube</p>
+        <p><span>Keliling Ruangan:</span> <span class="val"><span id="keliling">0</span> m</span></p>
+        <p><span>Kebutuhan Plint:</span> <span class="val"><span id="plint-batang">0</span> batang</span></p>
+        <p><span>Sealant (1:3):</span> <span class="val"><span id="plint-sealant">0</span> tube</span></p>
     </div>
   </div>
 
