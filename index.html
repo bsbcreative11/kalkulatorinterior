@@ -52,21 +52,21 @@
   
   <label>Jenis Material:</label>
   <select id="material" onchange="toggleMode(); hitung();">
+    <option value="wp_A">Wallpanel A — 16 × 290 cm</option>
+    <option value="wp_B">Wallpanel B — 16.8 × 290 cm</option>
+    <option value="wp_C">Wallpanel C — 17 × 300 cm</option>
+    <option value="wp_200">Wallpanel 200 — 15.8 × 290 cm</option>
+    <option value="wp_7100">Wallpanel 7100 — 16.8 × 290 cm</option>
+    <option value="wp_300">Wallpanel 30cm — 30 × 290 cm</option>
+    <option value="wpb_40">Wallpanel Board 4600 — 40 × 290 cm</option>
+    <option value="wpb_400">Wallpanel Board 400 — 40 × 300 cm</option>
+    <option value="wpb_6800">Wallpanel Board 6800 (Ekonomis) — 60 × 290 cm</option>
+    <option value="wpb_seamless_60">Wallpanel Board Seamless — 60 × 300 cm</option>
+    <option value="wpo_21">Wallpanel Outdoor (MAP WPO 01-05) — 21 × 290 cm</option>
     <option value="decking">WPC Decking (MAP MD 1100 / 1200) — 14 × 290 cm</option>
     <option value="vinyl">Vinyl Flooring (MAP MV 01Y-014Y) — 3.34 m²/box</option>
     <option value="spc">SPC Flooring (MAP MF 001-014) — 2.23 m²/box</option>
     <option value="spc_stone">SPC Stone Series — 2.16 m²/box</option>
-    <option value="wpo_21">Wallpanel Outdoor (MAP WPO 01-05) — 21 × 290 cm</option>
-    <option value="wp_300">Wallpanel (MAP WP KODE 300) — 30 × 290 cm</option>
-    <option value="wpb_40">Wallpanel Board (MAP WPB 40CM) — 40 × 290 cm</option>
-    <option value="wp_A">Wallpanel Kode A — 16 × 290 cm</option>
-    <option value="wp_B">Wallpanel Kode B — 16.8 × 290 cm</option>
-    <option value="wp_C">Wallpanel Kode C — 17 × 300 cm</option>
-    <option value="wp_200">Wallpanel Kode 200 — 15.8 × 290 cm</option>
-    <option value="wp_7100">Wallpanel Kode 7100 — 16.8 × 290 cm</option>
-    <option value="wpb_400">Wallpanel Board 40cm Kode 400 (Seamless) — 40 × 300 cm</option>
-    <option value="wpb_seamless_60">Wallpanel Board 60cm (Seamless) — 60 × 300 cm</option>
-    <option value="wpb_6800">Wallpanel Board 60cm Kode 6800 (Ekonomis) — 60 × 290 cm</option>
     <option value="plint">Plint Lantai (MAP MPL) — 10 × 240 cm</option>
   </select>
 
@@ -255,20 +255,14 @@ function hitung() {
 
   if (mat === 'decking') {
       let j = parseFloat(document.getElementById('jarakJoist').value) || 35;
-      
-      // Lebar efektif decking 14 cm (sesuai spesifikasi MD 1100/1200)
       let baris = Math.ceil(l / 0.14);
       let papanPerBaris = Math.ceil(p / 2.9);
-      
       let totalDecking = Math.ceil((baris * papanPerBaris) * (1 + buffer_or_waste / 100));
-
       let jalurJoist = Math.ceil(p / (j / 100)) + 1;
       let totalMataJoist = jalurJoist * l;
       let totalJoist = Math.ceil((totalMataJoist / 2.9) * (1 + buffer_or_waste / 100));
-
       let clipStart = jalurJoist * 2;
       let clipConn = Math.max(0, baris - 1) * jalurJoist;
-      
       let totalFisherScrew = Math.ceil((clipStart + clipConn) * 1.1);
 
       document.getElementById('decking').innerText = totalDecking;
