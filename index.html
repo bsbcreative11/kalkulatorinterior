@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Produk Interior Maju Abadi Perkasa</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      padding: 20px; margin: 0; min-height: 100vh; box-sizing: border-box;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      display: flex; justify-content: center; align-items: center;
+      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+    }
+    .card { 
+      background: rgba(255, 255, 255, 0.98); padding: 25px; border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width: 100%; max-width: 420px; 
+    }
+    .logo-container { text-align: center; margin-bottom: 10px; }
+    .logo-container img { max-width: 150px; height: auto; }
+    h2 { 
+      text-align: center; color: #0f172a; margin-top: 0; margin-bottom: 15px;
+      font-size: 1.1em; line-height: 1.4; border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px; text-transform: uppercase; font-weight: 700;
+    }
+    label { 
+      display: block; margin-top: 10px; font-weight: 600; font-size: 0.82em; 
+      color: #475569; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    input, select { 
+      width: 100%; padding: 10px; margin-top: 4px; box-sizing: border-box; 
+      border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95em;
+      outline: none; background: white;
+      -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto;
+    }
+    input:focus, select:focus { border-color: #2563eb; }
+    .info-box { font-size: 0.75em; color: #64748b; margin-top: 4px; font-style: italic; }
+    .result { margin-top: 15px; padding: 15px; background: #f1f5f9; border-radius: 10px; border-left: 4px solid #2563eb; }
+    .result p { margin: 6px 0; font-size: 0.9em; color: #334155; display: flex; justify-content: space-between; }
+    .result span { font-weight: bold; color: #0f172a; }
+    .copyright { text-align: center; margin-top: 20px; font-size: 0.75em; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-container">
+    <img src="LOGO-MAP.png" alt="Logo Maju Abadi Perkasa">
+  </div>
+  <h2>Kalkulator Produk Interior<br>Maju Abadi Perkasa</h2>
+  
+  <label>Jenis Material:</label>
+  <select id="material" onchange="toggleMode(); hitung();">
+    <option value="decking">WPC Decking (MAP MD 1100 / 1200) — 14 × 290 cm</option>
+    <option value="vinyl">Vinyl Flooring (MAP MV 01Y-014Y) — 3.34 m²/box</option>
+    <option value="spc">SPC Flooring (MAP MF 001-014) — 2.23 m²/box</option>
+    <option value="spc_stone">SPC Stone Series — 2.16 m²/box</option>
+    <option value="wpo_21">Wallpanel Outdoor (MAP WPO 01-05) — 21 × 290 cm</option>
+    <option value="wp_300">Wallpanel (MAP WP KODE 300) — 30 × 290 cm</option>
+    <option value="wpb_40">Wallpanel Board (MAP WPB 40CM) — 40 × 290 cm</option>
+    <option value="wp_A">Wallpanel Kode A — 16 × 290 cm</option>
+    <option value="wp_B">Wallpanel Kode B — 16.8 × 290 cm</option>
+    <option value="wp_C">Wallpanel Kode C — 17 × 300 cm</option>
+    <option value="wp_200">Wallpanel Kode 200 — 15.8 × 290 cm</option>
+    <option value="wp_7100">Wallpanel Kode 7100 — 16.8 × 290 cm</option>
+    <option value="wpb_400">Wallpanel Board 40cm Kode 400 (Seamless) — 40 × 300 cm</option>
+    <option value="wpb_seamless_60">Wallpanel Board 60cm (Seamless) — 60 × 300 cm</option>
+    <option value="wpb_6800">Wallpanel Board 60cm Kode 6800 (Ekonomis) — 60 × 290 cm</option>
+    <option value="plint">Plint Lantai (MAP MPL) — 10 × 240 cm</option>
+  </select>
+
+  <label>Opsi Perhitungan:</label>
+  <select id="opsiPerhitungan" onchange="toggleMode(); hitung();">
+    <option value="dengan_waste">Dengan Cadangan / Waste</option>
+    <option value="tanpa_waste">Tanpa Waste (Nett 0)</option>
+  </select>
+
+  <label id="lbl-panjang">Panjang Area (cm):</label>
+  <input type="number" id="panjang" value="400" min="0" step="1" oninput="hitung()">
+  
+  <label id="lbl-lebar">Lebar Area (cm):</label>
+  <input type="number" id="lebar" value="300" min="0" step="1" oninput="hitung()">
+
+  <div id="decking-fields">
+      <div id="bentuk-area-group">
+          <label>Bentuk Area Lapangan:</label>
+          <select id="bentukArea" onchange="updateWaste(); hitung();">
+              <option value="5">Persegi / Persegi Panjang (Waste 5%)</option>
+              <option value="15">Segi 5 / Segi 6 / Miring (Waste 15%)</option>
+              <option value="20">Bentuk Sangat Custom / Segi Banyak (Waste 20%)</option>
+          </select>
+      </div>
+      <label>Jarak Joist (cm):</label>
+      <input type="number" id="jarakJoist" value="35" min="0" oninput="hitung()">
+  </div>
+
+  <label id="waste-label">Cadangan / Waste (%):</label>
+  <input type="number" id="waste" value="5" min="0" oninput="hitung()">
+  <div class="info-box" id="waste-info">*Persentase waste otomatis disesuaikan dengan bentuk area.</div>
+
+  <div class="result">
+    <p>Estimasi Luas Area: <span id="luas">0</span> m²</p>
+    
+    <div id="res-decking">
+        <p>Decking Plank: <span id="decking">0</span> batang</p>
+        <p>Joist(MAD 01F) (290cm): <span id="joist">0</span> batang</p>
+        <p>Clip Starting(MAD 02F): <span id="clipStart">0</span> pcs</p>
+        <p>Clip Connecting(MAD 04F): <span id="clipConn">0</span> pcs</p>
+        <p>Fisher & Screw(MAD 06F): <span id="fisherScrew">0</span> pcs</p>
+    </div>
+    
+    <div id="res-vinyl" class="hidden">
+        <p>Kebutuhan Vinyl: <span id="vinyl">0</span> box</p>
+        <p>Lem Kuning (0.25kg/m²): <span id="lem">0</span> kg</p>
+    </div>
+
+    <div id="res-spc" class="hidden">
+        <p>Kebutuhan <span id="spc-label">SPC</span>: <span id="spc">0</span> box</p>
+    </div>
+
+    <div id="res-wallpanel" class="hidden">
+        <p>Kebutuhan Panel: <span id="wp-batang">0</span> batang</p>
+        <p>Clip: <span id="wp-clip">0</span> pcs</p>
+        <p>Sealant (280ml): <span id="wp-sealant">0</span> tube</p>
+        <p>Double Tape: <span id="wp-tape">0</span> roll</p>
+    </div>
+
+    <div id="res-plint" class="hidden">
+        <p>Keliling Ruangan: <span id="keliling">0</span> m</p>
+        <p>Kebutuhan Plint: <span id="plint-batang">0</span> batang</p>
+        <p>Sealant (1:3): <span id="plint-sealant">0</span> tube</p>
+    </div>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright Design by Muhamad Islahul Khoir
+  </div>
+</div>
+
+<script>
+// ==========================================
+// KODE PROTEKSI ANTI-COPY & ANTI-F12
+// ==========================================
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+  if (e.ctrlKey && e.shiftKey && ['I','i','J','j'].includes(e.key)) { e.preventDefault(); return false; }
+  if (e.ctrlKey && ['U','u'].includes(e.key)) { e.preventDefault(); return false; }
+  if ((e.ctrlKey || e.metaKey) && ['C','c'].includes(e.key) && e.target.tagName !== 'INPUT') { e.preventDefault(); return false; }
+});
+document.addEventListener('copy', function(e) { if(e.target.tagName !== 'INPUT') e.preventDefault(); });
+document.addEventListener('cut',  function(e) { if(e.target.tagName !== 'INPUT') e.preventDefault(); });
+document.addEventListener('paste',function(e) { if(e.target.tagName !== 'INPUT') e.preventDefault(); });
+
+// ==========================================
+// VALIDASI INPUT ANGKA
+// ==========================================
+document.querySelectorAll('input[type="number"]').forEach(function(input) {
+  input.addEventListener('keydown', function(e) {
+    if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+  });
+  input.addEventListener('input', function(e) {
+    if (this.value < 0) this.value = Math.abs(this.value);
+  });
+});
+
+function updateWaste() {
+  if (document.getElementById('material').value === 'decking' && document.getElementById('opsiPerhitungan').value === 'dengan_waste') {
+    document.getElementById('waste').value = document.getElementById('bentukArea').value;
+  }
+}
+
+function toggleMode() {
+  let mat = document.getElementById('material').value;
+  let opsi = document.getElementById('opsiPerhitungan').value;
+  let lblPanjang = document.getElementById('lbl-panjang');
+  let lblLebar = document.getElementById('lbl-lebar');
+  
+  // Hide all output groups
+  document.getElementById('decking-fields').classList.add('hidden');
+  document.getElementById('res-decking').classList.add('hidden');
+  document.getElementById('res-vinyl').classList.add('hidden');
+  document.getElementById('res-spc').classList.add('hidden');
+  document.getElementById('res-wallpanel').classList.add('hidden');
+  document.getElementById('res-plint').classList.add('hidden');
+
+  if (mat === 'decking') {
+    document.getElementById('decking-fields').classList.remove('hidden');
+    document.getElementById('res-decking').classList.remove('hidden');
+    document.getElementById('waste-label').innerText = 'Cadangan / Waste (%):';
+    document.getElementById('waste-info').innerText = '*Persentase waste otomatis disesuaikan dengan bentuk area.';
+    lblPanjang.innerText = 'Panjang Area (cm):';
+    lblLebar.innerText = 'Lebar Area (cm):';
+    if(opsi === 'dengan_waste') updateWaste();
+  } else {
+    if(opsi === 'dengan_waste' && document.getElementById('waste').value > 10) {
+        document.getElementById('waste').value = 1; 
+    } else if (opsi === 'dengan_waste' && document.getElementById('waste').value == 0) {
+        document.getElementById('waste').value = 1; 
+    }
+    document.getElementById('waste-info').innerText = '*Gunakan penambahan unit/box spesifik (1-2 unit) alih-alih persentase.';
+    
+    if (mat === 'vinyl' || mat === 'spc' || mat === 'spc_stone') {
+      if (mat === 'vinyl') {
+        document.getElementById('res-vinyl').classList.remove('hidden');
+      } else {
+        document.getElementById('res-spc').classList.remove('hidden');
+        document.getElementById('spc-label').innerText = (mat === 'spc_stone') ? 'SPC Stone' : 'SPC';
+      }
+      document.getElementById('waste-label').innerText = 'Buffer Cadangan (Box):';
+      lblPanjang.innerText = 'Panjang Area (cm):';
+      lblLebar.innerText = 'Lebar Area (cm):';
+    } else if (mat.startsWith('wp')) {
+      document.getElementById('res-wallpanel').classList.remove('hidden');
+      document.getElementById('waste-label').innerText = 'Buffer Cadangan (Batang):';
+      lblPanjang.innerText = 'Lebar Dinding (cm):';
+      lblLebar.innerText = 'Tinggi Dinding (cm):';
+    } else if (mat === 'plint') {
+      document.getElementById('res-plint').classList.remove('hidden');
+      document.getElementById('waste-label').innerText = 'Buffer Cadangan (Batang):';
+      lblPanjang.innerText = 'Panjang Ruangan (cm):';
+      lblLebar.innerText = 'Lebar Ruangan (cm):';
+    }
+  }
+
+  if (opsi === 'tanpa_waste') {
+      document.getElementById('waste').classList.add('hidden');
+      document.getElementById('waste-label').classList.add('hidden');
+      document.getElementById('waste-info').classList.add('hidden');
+      document.getElementById('bentuk-area-group').classList.add('hidden');
+  } else {
+      document.getElementById('waste').classList.remove('hidden');
+      document.getElementById('waste-label').classList.remove('hidden');
+      document.getElementById('waste-info').classList.remove('hidden');
+      if (mat === 'decking') {
+          document.getElementById('bentuk-area-group').classList.remove('hidden');
+      }
+  }
+}
+
+function hitung() {
+  let mat = document.getElementById('material').value;
+  let opsi = document.getElementById('opsiPerhitungan').value;
+  
+  let p_cm = parseFloat(document.getElementById('panjang').value) || 0;
+  let l_cm = parseFloat(document.getElementById('lebar').value) || 0;
+  let p = p_cm / 100;
+  let l = l_cm / 100;
+  
+  let buffer_or_waste = (opsi === 'tanpa_waste') ? 0 : (parseFloat(document.getElementById('waste').value) || 0);
+  
+  let luas = p * l;
+  document.getElementById('luas').innerText = luas.toFixed(2);
+
+  if (mat === 'decking') {
+      let j = parseFloat(document.getElementById('jarakJoist').value) || 35;
+      
+      // Lebar efektif decking 14 cm (sesuai spesifikasi MD 1100/1200)
+      let baris = Math.ceil(l / 0.14);
+      let papanPerBaris = Math.ceil(p / 2.9);
+      
+      let totalDecking = Math.ceil((baris * papanPerBaris) * (1 + buffer_or_waste / 100));
+
+      let jalurJoist = Math.ceil(p / (j / 100)) + 1;
+      let totalMataJoist = jalurJoist * l;
+      let totalJoist = Math.ceil((totalMataJoist / 2.9) * (1 + buffer_or_waste / 100));
+
+      let clipStart = jalurJoist * 2;
+      let clipConn = Math.max(0, baris - 1) * jalurJoist;
+      
+      let totalFisherScrew = Math.ceil((clipStart + clipConn) * 1.1);
+
+      document.getElementById('decking').innerText = totalDecking;
+      document.getElementById('joist').innerText = totalJoist;
+      document.getElementById('clipStart').innerText = clipStart;
+      document.getElementById('clipConn').innerText = clipConn;
+      document.getElementById('fisherScrew').innerText = totalFisherScrew;
+      
+  } else if (mat === 'vinyl') {
+      let boxVinyl = Math.ceil(luas / 3.34) + buffer_or_waste; 
+      let lemKg = Math.ceil(luas * 0.25); 
+      document.getElementById('vinyl').innerText = boxVinyl;
+      document.getElementById('lem').innerText = lemKg;
+      
+  } else if (mat === 'spc') {
+      let boxSpc = Math.ceil(luas / 2.23) + buffer_or_waste;
+      document.getElementById('spc').innerText = boxSpc;
+
+  } else if (mat === 'spc_stone') {
+      let boxSpcStone = Math.ceil(luas / 2.16) + buffer_or_waste;
+      document.getElementById('spc').innerText = boxSpcStone;
+
+  } else if (mat.startsWith('wp')) {
+      let luas_panel = 0;
+      let sealant_ratio = 4;
+      let clip_ratio = 5;
+      
+      if (mat === 'wpo_21') {
+          luas_panel = 0.21 * 2.9;  sealant_ratio = 2;  clip_ratio = 6;
+      } else if (mat === 'wp_300') {
+          luas_panel = 0.30 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+      } else if (mat === 'wpb_40') {
+          luas_panel = 0.40 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+      } else if (mat === 'wp_A') {
+          luas_panel = 0.16 * 2.9;  sealant_ratio = 4;  clip_ratio = 5;
+      } else if (mat === 'wp_B') {
+          luas_panel = 0.168 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
+      } else if (mat === 'wp_C') {
+          luas_panel = 0.17 * 3.0;  sealant_ratio = 4;  clip_ratio = 5;
+      } else if (mat === 'wp_200') {
+          luas_panel = 0.158 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
+      } else if (mat === 'wp_7100') {
+          luas_panel = 0.168 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
+      } else if (mat === 'wpb_400') {
+          luas_panel = 0.40 * 3.0;  sealant_ratio = 2;  clip_ratio = 5;
+      } else if (mat === 'wpb_seamless_60') {
+          luas_panel = 0.60 * 3.0;  sealant_ratio = 2;  clip_ratio = 5;
+      } else if (mat === 'wpb_6800') {
+          luas_panel = 0.60 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+      }
+
+      let batangWP = Math.ceil(luas / luas_panel) + buffer_or_waste; 
+      let clipWP = batangWP * clip_ratio;
+      let sealantWP = Math.ceil(batangWP / sealant_ratio);
+      let tapeWP = Math.ceil(batangWP / 3);
+      
+      document.getElementById('wp-batang').innerText = batangWP;
+      document.getElementById('wp-clip').innerText = clipWP;
+      document.getElementById('wp-sealant').innerText = sealantWP;
+      document.getElementById('wp-tape').innerText = tapeWP;
+      
+  } else if (mat === 'plint') {
+      let keliling = 2 * (p + l);
+      let batangPlint = Math.ceil(keliling / 2.4) + buffer_or_waste; 
+      let sealantPlint = Math.ceil(batangPlint / 3);
+      
+      document.getElementById('keliling').innerText = keliling.toFixed(2);
+      document.getElementById('plint-batang').innerText = batangPlint;
+      document.getElementById('plint-sealant').innerText = sealantPlint;
+  }
+}
+
+// Initial state
+toggleMode();
+hitung();
+</script>
+
+</body>
+</html>
