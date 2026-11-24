@@ -65,9 +65,9 @@
   
   <label>Jenis Material:</label>
   <select id="material" onchange="toggleMode(); hitung();">
-    <option value="wp_A">Wallpanel A — 16 × 290 cm</option>
+    <option value="wp_A">Wallpanel -A — 16 × 290 cm</option>
     <option value="wp_B">Wallpanel B & 7100 — 16.8 × 290 cm</option>
-    <option value="wp_C">Wallpanel C — 17 × 300 cm</option>
+    <option value="wp_C">Wallpanel -C — 17 × 300 cm</option>
     <option value="wp_200">Wallpanel 200 — 15.8 × 290 cm</option>
     <option value="wp_300">Wallpanel 30cm — 30 × 290 cm</option>
     <option value="wpb_40">Wallpanel Board 4600 — 40 × 290 cm</option>
@@ -107,9 +107,9 @@
       <input type="number" id="jarakJoist" value="35" min="0" oninput="hitung()">
   </div>
 
-  <label id="waste-label">Cadangan / Waste (%):</label>
-  <input type="number" id="waste" value="5" min="0" oninput="hitung()">
-  <div class="info-box" id="waste-info">*Persentase waste otomatis disesuaikan dengan bentuk area.</div>
+  <label id="waste-label">Buffer Cadangan (Batang):</label>
+  <input type="number" id="waste" value="1" min="0" oninput="hitung()">
+  <div class="info-box" id="waste-info">*Gunakan penambahan unit/box spesifik (1-2 unit) alih-alih persentase.</div>
 
   <div class="result">
     <p><span>Estimasi Luas Area:</span> <span class="val"><span id="luas">0</span> m²</span></p>
