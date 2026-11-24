@@ -36,7 +36,6 @@
     input:focus, select:focus { border-color: #2563eb; }
     .info-box { font-size: 0.75em; color: #64748b; margin-top: 4px; font-style: italic; }
     
-    /* === PERBAIKAN CSS HASIL === */
     .result { 
       margin-top: 15px; padding: 15px; background: #f1f5f9; 
       border-radius: 10px; border-left: 4px solid #2563eb; 
@@ -67,10 +66,9 @@
   <label>Jenis Material:</label>
   <select id="material" onchange="toggleMode(); hitung();">
     <option value="wp_A">Wallpanel -A — 16 × 290 cm</option>
-    <option value="wp_B">Wallpanel B — 16.8 × 290 cm</option>
+    <option value="wp_B">Wallpanel B & 7100 — 16.8 × 290 cm</option>
     <option value="wp_C">Wallpanel -C — 17 × 300 cm</option>
     <option value="wp_200">Wallpanel 200 — 15.8 × 290 cm</option>
-    <option value="wp_7100">Wallpanel 7100 — 16.8 × 290 cm</option>
     <option value="wp_300">Wallpanel 30cm — 30 × 290 cm</option>
     <option value="wpb_40">Wallpanel Board 4600 — 40 × 290 cm</option>
     <option value="wpb_400">Wallpanel Board 400 — 40 × 300 cm</option>
@@ -113,7 +111,6 @@
   <input type="number" id="waste" value="5" min="0" oninput="hitung()">
   <div class="info-box" id="waste-info">*Persentase waste otomatis disesuaikan dengan bentuk area.</div>
 
-  <!-- === PERBAIKAN STRUKTUR HTML HASIL === -->
   <div class="result">
     <p><span>Estimasi Luas Area:</span> <span class="val"><span id="luas">0</span> m²</span></p>
     
@@ -270,7 +267,11 @@ function hitung() {
 
   if (mat === 'decking') {
       let j = parseFloat(document.getElementById('jarakJoist').value) || 35;
-      let baris = Math.ceil(l / 0.14);
+      
+      // LEBAR EFEKTIF DECKING MAP (Sesuai gambar: 140mm / 14cm tanpa overlap)
+      let lebar_efektif_decking = 0.14; 
+      
+      let baris = Math.ceil(l / lebar_efektif_decking);
       let papanPerBaris = Math.ceil(p / 2.9);
       let totalDecking = Math.ceil((baris * papanPerBaris) * (1 + buffer_or_waste / 100));
       let jalurJoist = Math.ceil(p / (j / 100)) + 1;
@@ -304,30 +305,59 @@ function hitung() {
       let luas_panel = 0;
       let sealant_ratio = 4;
       let clip_ratio = 5;
+      let lebar_efektif = 0;
+      let panjang_panel = 0;
       
+      // =====================================================================
+      // CATATAN: LEBAR EFEKTIF WALLPANEL ADALAH ESTIMASI STANDAR (OVERLAP 1.5 CM)
+      // SILAKAN SESUAIKAN ANGKA LEBAR EFEKTIF JIKA ADA DATA RESMI DARI PABRIK
+      // =====================================================================
+
       if (mat === 'wpo_21') {
-          luas_panel = 0.21 * 2.9;  sealant_ratio = 2;  clip_ratio = 6;
+          lebar_efektif = 0.195; // Asli 21cm - 1.5cm overlap
+          panjang_panel = 2.9;
+          sealant_ratio = 2;  clip_ratio = 6;
       } else if (mat === 'wp_300') {
-          luas_panel = 0.30 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+          lebar_efektif = 0.285; // Asli 30cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 2;  clip_ratio = 5;
       } else if (mat === 'wpb_40') {
-          luas_panel = 0.40 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+          lebar_efektif = 0.385; // Asli 40cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 2;  clip_ratio = 5;
       } else if (mat === 'wp_A') {
-          luas_panel = 0.16 * 2.9;  sealant_ratio = 4;  clip_ratio = 5;
+          lebar_efektif = 0.145; // Asli 16cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_B') {
-          luas_panel = 0.168 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
+          lebar_efektif = 0.153; // Asli 16.8cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_C') {
-          luas_panel = 0.17 * 3.0;  sealant_ratio = 4;  clip_ratio = 5;
+          lebar_efektif = 0.155; // Asli 17cm - 1.5cm
+          panjang_panel = 3.0;
+          sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_200') {
-          luas_panel = 0.158 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
-      } else if (mat === 'wp_7100') {
-          luas_panel = 0.168 * 2.9; sealant_ratio = 4;  clip_ratio = 5;
+          lebar_efektif = 0.143; // Asli 15.8cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wpb_400') {
-          luas_panel = 0.40 * 3.0;  sealant_ratio = 2;  clip_ratio = 5;
+          // Seamless biasanya overlap lebih kecil (asumsi 0.5cm)
+          lebar_efektif = 0.395; // Asli 40cm - 0.5cm
+          panjang_panel = 3.0;
+          sealant_ratio = 2;  clip_ratio = 5;
       } else if (mat === 'wpb_seamless_60') {
-          luas_panel = 0.60 * 3.0;  sealant_ratio = 2;  clip_ratio = 5;
+          // Seamless biasanya overlap lebih kecil (asumsi 0.5cm)
+          lebar_efektif = 0.595; // Asli 60cm - 0.5cm
+          panjang_panel = 3.0;
+          sealant_ratio = 2;  clip_ratio = 5;
       } else if (mat === 'wpb_6800') {
-          luas_panel = 0.60 * 2.9;  sealant_ratio = 2;  clip_ratio = 5;
+          lebar_efektif = 0.585; // Asli 60cm - 1.5cm
+          panjang_panel = 2.9;
+          sealant_ratio = 2;  clip_ratio = 5;
       }
+
+      luas_panel = lebar_efektif * panjang_panel;
 
       let batangWP = Math.ceil(luas / luas_panel) + buffer_or_waste; 
       let clipWP = batangWP * clip_ratio;
@@ -340,6 +370,7 @@ function hitung() {
       document.getElementById('wp-tape').innerText = tapeWP;
       
   } else if (mat === 'plint') {
+      // Plint tidak butuh lebar efektif karena dihitung pakai keliling
       let keliling = 2 * (p + l);
       let batangPlint = Math.ceil(keliling / 2.4) + buffer_or_waste; 
       let sealantPlint = Math.ceil(batangPlint / 3);
