@@ -332,19 +332,19 @@ function hitung() {
           panjang_panel = 2.9;
           sealant_ratio = 2;  clip_ratio = 5;
       } else if (mat === 'wp_A') {
-          lebar_efektif = 0.145; // Asli 16cm - 1.5cm
+          lebar_efektif = 0.152; // Dari model 3D (152 mm)
           panjang_panel = 2.9;
           sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_B') {
-          lebar_efektif = 0.153; // Asli 16.8cm - 1.5cm
+          lebar_efektif = 0.152; // Disamakan dengan Wallpanel A (152 mm)
           panjang_panel = 2.9;
           sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_C') {
-          lebar_efektif = 0.155; // Asli 17cm - 1.5cm
+          lebar_efektif = 0.152; // Disamakan dengan Wallpanel A (152 mm)
           panjang_panel = 3.0;
           sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wp_200') {
-          lebar_efektif = 0.143; // Asli 15.8cm - 1.5cm
+          lebar_efektif = 0.152; // Disamakan dengan Wallpanel A (152 mm)
           panjang_panel = 2.9;
           sealant_ratio = 4;  clip_ratio = 5;
       } else if (mat === 'wpb_400') {
@@ -363,11 +363,19 @@ function hitung() {
           sealant_ratio = 2;  clip_ratio = 5;
       }
 
-      // Panel dipasang vertikal: hitung per kolom, sisa potongan tidak dipakai ulang
+      // Panel dipasang vertikal, dihitung per kolom.
       // p = lebar dinding (m), l = tinggi dinding (m)
+      // Kekurangan tinggi (sisa) dipotong dari batang utuh: 1 batang bisa jadi beberapa potongan sisa.
       let kolom = ceilSafe(p / lebar_efektif);
-      let batangPerKolom = ceilSafe(l / panjang_panel);
-      let batangWP = (kolom * batangPerKolom) + buffer_or_waste;
+      let barisPenuh = Math.floor(+(l / panjang_panel).toFixed(6));
+      let sisaTinggi = +(l - barisPenuh * panjang_panel).toFixed(6);
+
+      let batangWP = kolom * barisPenuh;
+      if (sisaTinggi > 0 && kolom > 0) {
+          let potonganPerBatang = Math.floor(+(panjang_panel / sisaTinggi).toFixed(6));
+          batangWP += ceilSafe(kolom / potonganPerBatang);
+      }
+      batangWP += buffer_or_waste;
 
       let clipWP = batangWP * clip_ratio;
       let sealantWP = ceilSafe(batangWP / sealant_ratio);
