@@ -65,9 +65,9 @@
   
   <label>Jenis Material:</label>
   <select id="material" onchange="toggleMode(); hitung();">
-    <option value="wp_A">Wallpanel -A — 16 × 290 cm</option>
+    <option value="wp_A">Wallpanel A — 16 × 290 cm</option>
     <option value="wp_B">Wallpanel B & 7100 — 16.8 × 290 cm</option>
-    <option value="wp_C">Wallpanel -C — 17 × 300 cm</option>
+    <option value="wp_C">Wallpanel C — 17 × 300 cm</option>
     <option value="wp_200">Wallpanel 200 — 15.8 × 290 cm</option>
     <option value="wp_300">Wallpanel 30cm — 30 × 290 cm</option>
     <option value="wpb_40">Wallpanel Board 4600 — 40 × 290 cm</option>
@@ -177,6 +177,12 @@ document.querySelectorAll('input[type="number"]').forEach(function(input) {
   });
 });
 
+// Pembulatan ke atas yang aman dari error floating point (mis. 20.000000000000004)
+const ceilSafe = x => Math.ceil(+x.toFixed(6));
+
+// Material terakhir yang dipilih (untuk reset buffer saat ganti material)
+let lastMat = 'wp_A';
+
 function updateWaste() {
   if (document.getElementById('material').value === 'decking' && document.getElementById('opsiPerhitungan').value === 'dengan_waste') {
     document.getElementById('waste').value = document.getElementById('bentukArea').value;
@@ -204,12 +210,11 @@ function toggleMode() {
     document.getElementById('waste-info').innerText = '*Persentase waste otomatis disesuaikan dengan bentuk area.';
     lblPanjang.innerText = 'Panjang Area (cm):';
     lblLebar.innerText = 'Lebar Area (cm):';
-    if(opsi === 'dengan_waste') updateWaste();
+    if (opsi === 'dengan_waste') updateWaste();
   } else {
-    if(opsi === 'dengan_waste' && document.getElementById('waste').value > 10) {
-        document.getElementById('waste').value = 1; 
-    } else if (opsi === 'dengan_waste' && document.getElementById('waste').value == 0) {
-        document.getElementById('waste').value = 1; 
+    // Reset buffer ke 1 unit hanya saat pindah material (mis. dari Decking)
+    if (mat !== lastMat) {
+      document.getElementById('waste').value = 1;
     }
     document.getElementById('waste-info').innerText = '*Gunakan penambahan unit/box spesifik (1-2 unit) alih-alih persentase.';
     
@@ -249,6 +254,8 @@ function toggleMode() {
           document.getElementById('bentuk-area-group').classList.remove('hidden');
       }
   }
+
+  lastMat = mat;
 }
 
 function hitung() {
@@ -271,15 +278,15 @@ function hitung() {
       // LEBAR EFEKTIF DECKING MAP (Sesuai gambar: 140mm / 14cm tanpa overlap)
       let lebar_efektif_decking = 0.14; 
       
-      let baris = Math.ceil(l / lebar_efektif_decking);
-      let papanPerBaris = Math.ceil(p / 2.9);
-      let totalDecking = Math.ceil((baris * papanPerBaris) * (1 + buffer_or_waste / 100));
-      let jalurJoist = Math.ceil(p / (j / 100)) + 1;
+      let baris = ceilSafe(l / lebar_efektif_decking);
+      let papanPerBaris = ceilSafe(p / 2.9);
+      let totalDecking = ceilSafe((baris * papanPerBaris) * (1 + buffer_or_waste / 100));
+      let jalurJoist = ceilSafe(p / (j / 100)) + 1;
       let totalMataJoist = jalurJoist * l;
-      let totalJoist = Math.ceil((totalMataJoist / 2.9) * (1 + buffer_or_waste / 100));
+      let totalJoist = ceilSafe((totalMataJoist / 2.9) * (1 + buffer_or_waste / 100));
       let clipStart = jalurJoist * 2;
       let clipConn = Math.max(0, baris - 1) * jalurJoist;
-      let totalFisherScrew = Math.ceil((clipStart + clipConn) * 1.1);
+      let totalFisherScrew = ceilSafe((clipStart + clipConn) * 1.1);
 
       document.getElementById('decking').innerText = totalDecking;
       document.getElementById('joist').innerText = totalJoist;
@@ -288,21 +295,20 @@ function hitung() {
       document.getElementById('fisherScrew').innerText = totalFisherScrew;
       
   } else if (mat === 'vinyl') {
-      let boxVinyl = Math.ceil(luas / 3.34) + buffer_or_waste; 
-      let lemKg = Math.ceil(luas * 0.25); 
+      let boxVinyl = ceilSafe(luas / 3.34) + buffer_or_waste; 
+      let lemKg = ceilSafe(luas * 0.25); 
       document.getElementById('vinyl').innerText = boxVinyl;
       document.getElementById('lem').innerText = lemKg;
       
   } else if (mat === 'spc') {
-      let boxSpc = Math.ceil(luas / 2.23) + buffer_or_waste;
+      let boxSpc = ceilSafe(luas / 2.23) + buffer_or_waste;
       document.getElementById('spc').innerText = boxSpc;
 
   } else if (mat === 'spc_stone') {
-      let boxSpcStone = Math.ceil(luas / 2.16) + buffer_or_waste;
+      let boxSpcStone = ceilSafe(luas / 2.16) + buffer_or_waste;
       document.getElementById('spc').innerText = boxSpcStone;
 
   } else if (mat.startsWith('wp')) {
-      let luas_panel = 0;
       let sealant_ratio = 4;
       let clip_ratio = 5;
       let lebar_efektif = 0;
@@ -357,12 +363,15 @@ function hitung() {
           sealant_ratio = 2;  clip_ratio = 5;
       }
 
-      luas_panel = lebar_efektif * panjang_panel;
+      // Panel dipasang vertikal: hitung per kolom, sisa potongan tidak dipakai ulang
+      // p = lebar dinding (m), l = tinggi dinding (m)
+      let kolom = ceilSafe(p / lebar_efektif);
+      let batangPerKolom = ceilSafe(l / panjang_panel);
+      let batangWP = (kolom * batangPerKolom) + buffer_or_waste;
 
-      let batangWP = Math.ceil(luas / luas_panel) + buffer_or_waste; 
       let clipWP = batangWP * clip_ratio;
-      let sealantWP = Math.ceil(batangWP / sealant_ratio);
-      let tapeWP = Math.ceil(batangWP / 3);
+      let sealantWP = ceilSafe(batangWP / sealant_ratio);
+      let tapeWP = ceilSafe(batangWP / 3);
       
       document.getElementById('wp-batang').innerText = batangWP;
       document.getElementById('wp-clip').innerText = clipWP;
@@ -372,8 +381,8 @@ function hitung() {
   } else if (mat === 'plint') {
       // Plint tidak butuh lebar efektif karena dihitung pakai keliling
       let keliling = 2 * (p + l);
-      let batangPlint = Math.ceil(keliling / 2.4) + buffer_or_waste; 
-      let sealantPlint = Math.ceil(batangPlint / 3);
+      let batangPlint = ceilSafe(keliling / 2.4) + buffer_or_waste; 
+      let sealantPlint = ceilSafe(batangPlint / 3);
       
       document.getElementById('keliling').innerText = keliling.toFixed(2);
       document.getElementById('plint-batang').innerText = batangPlint;
